@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+# require 'capybara/rails'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -28,6 +29,11 @@ module StoreApp
         http_client.timeout = 300
         Capybara::Selenium::Driver.new(app, :browser => :chrome, :http_client => http_client)
     end
+    # Capybara.configure do |config|
+    #   config.run_server = false
+    #   config.default_driver = :selenium
+    #   config.app_host = 'http://map.ezship.com.tw' # change url
+    # end
     
   end
 end

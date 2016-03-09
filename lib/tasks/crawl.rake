@@ -1,5 +1,6 @@
 require 'net/http'
-
+require 'capybara'
+require 'capybara/dsl'
 
 namespace :crawl do
 
@@ -160,6 +161,44 @@ namespace :crawl do
 
 	end
 
+	task :crawl_roads_manually => :environment do
+
+		include Capybara::DSL
+		Capybara.current_driver = :selenium_chrome
+		page.visit 'http://map.ezship.com.tw/ezship_map_web_2014.jsp'
+	
+		find('#ui-id-3').click
+		sleep(1)
+
+		# 改手動換縣市抓資料
+		# County.all.each do |county|
+			county = County.find(15)
+			find_button("#{county.name}").click
+			sleep(1)
+
+			towns = county.towns
+			towns.each do |town|
+				find_button("#{town.name}").click
+				sleep(1)
+
+				page_no = Nokogiri::HTML(page.html)
+				page_no.css("#thisMainArea button").css("span").last.remove
+				buttons = page_no.css("#thisMainArea button").css("span")
+				buttons.each do |button|
+		  		puts button.children.to_s
+		  		road = Road.new
+		  		road.town_id = town.id
+		  		road.name = button.children.to_s
+		  		road.save
+		  	end
+
+		  	find_button("上一步").click
+			end
+
+		# 	find_button("上一步").click
+		# end
+
+	end
 
 	task :crawl_roads => :environment do
 
@@ -227,9 +266,10 @@ namespace :crawl do
 		end
 	end
 
-	task :crawl_countys => :environment do
+	task :crawl_counties => :environment do
 		include Capybara::DSL
   	Capybara.current_driver = :selenium_chrome
+  	# Capybara.app_host = "http://map.ezship.com.tw"
   	page.visit 'http://map.ezship.com.tw/ezship_map_web_2014.jsp'
   	find('#ui-id-3').click
 		sleep(1)
