@@ -28,15 +28,7 @@ development:
   adapter: mysql2
   host: localhost
   username: root
-  password: ej03xu35k3
-  database: store_db
-  pool: 30
-
-test:
-  adapter: mysql2
-  host: localhost
-  username: root
-  password: ej03xu35k3
+  password: 123456
   database: store_db
   pool: 30
 
